@@ -1,0 +1,49 @@
+import tkinter as tk
+import string
+import random
+import pyperclip
+
+class URLShortenerApp:
+    def __init__(self, master):
+        self.master = master
+        self.master.title("URL Shortener")
+
+        self.label = tk.Label(master, text="Enter URL:")
+        self.label.pack()
+
+        self.url_entry = tk.Entry(master, width=40)
+        self.url_entry.pack()
+
+        self.shorten_button = tk.Button(master, text="Shorten", command=self.shorten_url)
+        self.shorten_button.pack()
+
+        self.short_url_label = tk.Label(master, text="")
+        self.short_url_label.pack()
+
+        self.copy_button = tk.Button(master, text="Copy to Clipboard", command=self.copy_to_clipboard)
+        self.copy_button.pack()
+
+    def shorten_url(self):
+        original_url = self.url_entry.get()
+
+        if not original_url.startswith(('http://', 'https://')):
+            original_url = 'http://' + original_url
+
+        short_code = self.generate_short_code()
+        short_url = f'http://short.url/{short_code}'  # Replace with your actual domain
+
+        self.short_url_label.config(text=f"Shortened URL: {short_url}")
+
+    def generate_short_code(self, length=6):
+        characters = string.ascii_letters + string.digits
+        return ''.join(random.choice(characters) for _ in range(length))
+
+    def copy_to_clipboard(self):
+        short_url = self.short_url_label.cget("text").split(": ")[1]
+        pyperclip.copy(short_url)
+        print("Short URL copied to clipboard")
+
+if __name__ == '__main__':
+    root = tk.Tk()
+    app = URLShortenerApp(root)
+    root.mainloop()
